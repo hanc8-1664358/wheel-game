@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#17152f">
 <title>幸运转盘 · Lucky Spin</title>
 <style>
@@ -24,7 +24,7 @@ body{
 }
 button,input{font:inherit}
 button{cursor:pointer}
-.app{width:min(1240px,calc(100% - 36px));margin:0 auto;padding:34px 0 46px}
+.app{width:min(1240px,calc(100% - 36px));margin:0 auto;padding:max(34px,env(safe-area-inset-top)) env(safe-area-inset-right) max(46px,env(safe-area-inset-bottom)) env(safe-area-inset-left)}
 header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:26px}
 .brand{display:flex;align-items:center;gap:13px}
 .brand-mark{
@@ -162,20 +162,56 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
 .confetti{position:absolute;top:-12px;width:8px;height:14px;opacity:0;pointer-events:none;animation:fall 1.8s ease-in forwards}
 @keyframes fall{0%{opacity:1;transform:translateY(-10px) rotate(0)}100%{opacity:0;transform:translateY(430px) rotate(620deg)}}
 @media(max-width:900px){.layout{grid-template-columns:1fr}.wheel-panel{padding:22px}.wheel-stage{width:min(100%,510px)}.editor-panel{padding:22px}}
+/* Mobile controls remain native and usable with touch, keyboard and zoom. */
+.editor-toggle{display:none}
+.history-item{max-width:100%;overflow-wrap:anywhere}
+.history-item strong{min-width:0;overflow-wrap:anywhere}
+.history-time{flex-shrink:0}
+.toast{max-width:calc(100% - 32px);bottom:calc(20px + env(safe-area-inset-bottom));text-align:center}
+.modal{overflow-y:auto;padding:max(16px,env(safe-area-inset-top)) max(16px,env(safe-area-inset-right)) max(16px,env(safe-area-inset-bottom)) max(16px,env(safe-area-inset-left))}
+.result-card{max-height:calc(100dvh - 32px);overflow-y:auto}
+button{touch-action:manipulation}
+button:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
 @media(max-width:560px){
-  .app{width:calc(100% - 22px);padding:20px 0 30px}
-  header{align-items:flex-start;margin-bottom:17px}.brand-mark{width:40px;height:40px;border-radius:13px}
-  .brand h1{font-size:18px}.brand p{font-size:9px}
-  .header-actions{gap:6px}.header-actions .btn{font-size:11px;padding:8px 9px}
-  .wheel-panel{padding:17px 12px 17px;border-radius:19px}
-  .panel-heading h2,.editor-top h2{font-size:17px}
+  .app{width:auto;margin:0;padding:max(20px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) calc(28px + env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left))}
+  header{display:block;margin-bottom:20px}
+  .brand{gap:12px}.brand-mark{width:44px;height:44px;flex-shrink:0}
+  .brand h1{font-size:22px}.brand p{font-size:10px;letter-spacing:1.2px}
+  .header-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:18px}
+  .header-actions .btn{min-height:44px;font-size:13px;padding:10px 6px;background:rgba(255,255,255,.055)}
+  .layout{gap:14px}.panel{border-radius:22px}
+  .wheel-panel{padding:18px 12px 20px;background:linear-gradient(160deg,rgba(150,116,255,.15),rgba(255,255,255,.045))}
+  .panel-heading{padding:0 6px;margin-bottom:8px}
+  .panel-heading h2,.editor-top h2{font-size:18px}
   .wheel-stage{width:100%}.pointer{border-left-width:13px;border-right-width:13px;border-top-width:25px}
-  .editor-panel{padding:18px 12px;border-radius:19px}
-  .entry-row{grid-template-columns:21px minmax(0,1fr) 62px 34px 52px 27px;gap:5px;padding:7px 5px}
-  .entry-row input[type="text"],.entry-row input[type="number"]{font-size:11px;height:32px;padding:0 5px}
-  .entry-row input[type="color"]{width:31px;height:32px}
-  .probability strong{font-size:10px}.delete-btn{width:26px;height:27px}
-  .history-panel{padding:17px 14px}
+  .wheel-hint{font-size:12px;line-height:1.7;padding:0 4px}
+  .wheel-status{font-size:13px;border-radius:14px;line-height:1.6;margin-top:12px}
+  .editor-panel{padding:0;overflow:hidden}
+  .editor-toggle{display:flex;width:100%;align-items:center;justify-content:space-between;gap:10px;padding:20px 18px;border:0;background:transparent;color:var(--text);text-align:left;font-size:16px;font-weight:750;min-height:64px}
+  .editor-toggle span:last-child{font-size:12px;color:#ffe2a1;white-space:nowrap}
+  .editor-body{display:none;padding:0 14px 18px}
+  .editor-panel.is-open .editor-body{display:block}
+  .editor-top{align-items:center;padding-top:4px}
+  .editor-top h2{font-size:16px}.editor-top .eyebrow{display:none}
+  .btn,.mode-btn{min-height:44px}.mode-btn{font-size:14px}
+  .mode-description,.editor-note{font-size:12px;line-height:1.7}
+  .entry-list{max-height:none;overflow:visible;padding:0;gap:12px}
+  .entry-row{grid-template-columns:26px minmax(0,1fr) 52px 44px;gap:10px 8px;padding:12px;background:rgba(255,255,255,.06);border-radius:16px}
+  .entry-number{grid-column:1;grid-row:1;font-size:12px}
+  .entry-row input[type="text"]{grid-column:2 / 4;grid-row:1}
+  .entry-row input[type="number"]{grid-column:2;grid-row:2}
+  .entry-row input[type="color"]{grid-column:1;grid-row:2;width:44px;max-width:none;transform:translateX(-6px)}
+  .entry-row input[type="text"],.entry-row input[type="number"]{font-size:16px;height:44px;padding:0 10px}
+  .entry-row input[type="color"]{height:44px;padding:4px}
+  .probability{grid-column:3 / 5;grid-row:2;text-align:right}
+  .probability small{font-size:10px}.probability strong{font-size:14px}
+  .delete-btn{grid-column:4;grid-row:1;width:44px;height:44px;font-size:24px}
+  .editor-actions{flex-wrap:wrap}.editor-actions .btn{font-size:12px;padding:10px 6px}
+  .history-panel{margin-top:14px;padding:18px 16px}
+  .history-list{display:grid;grid-template-columns:minmax(0,1fr);gap:8px}
+  .history-item{padding:12px;font-size:14px}.history-time{margin-left:auto}
+  .footer{line-height:1.7;padding:0 12px}
+  .result-card{padding:26px 20px 22px}.result-actions .btn{font-size:14px}
 }
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;transition-duration:.01ms!important}}
 </style>
@@ -211,6 +247,8 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
     </section>
 
     <section class="panel editor-panel">
+      <button class="editor-toggle" id="editorToggle" type="button" aria-expanded="false" aria-controls="editorBody"><span>自定义转盘</span><span id="editorToggleHint">展开设置 ＋</span></button>
+      <div class="editor-body" id="editorBody">
       <div class="editor-top">
         <div><div class="eyebrow">CUSTOMIZE</div><h2>自定义选项</h2></div>
         <button class="btn primary" id="addBtn">＋ 添加格子</button>
@@ -235,6 +273,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
         <button class="btn" id="sampleBtn">恢复示例内容</button>
       </div>
       <p class="editor-note">提示：添加或删除格子即可改变转盘格子数量。权重只影响「按权重」模式；等概率模式下每个格子中奖机会相同。配置会自动保存在当前浏览器。</p>
+      </div>
     </section>
   </main>
 
@@ -286,6 +325,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
   let rotation = 0;
   let spinning = false;
   let dragging = false;
+  let activePointerId = null;
   let dragMoved = false;
   let lastPointerAngle = 0;
   let lastPointerTime = 0;
@@ -359,7 +399,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
       const num=document.createElement("div");num.className="entry-number";num.textContent=String(index+1).padStart(2,"0");
       const label=document.createElement("input");label.type="text";label.maxLength=24;label.value=item.label;label.setAttribute("aria-label",`第${index+1}格内容`);
       label.addEventListener("input",()=>{entries[index].label=label.value||`选项 ${index+1}`;drawWheel();saveConfig();});
-      const weight=document.createElement("input");weight.type="number";weight.min=".01";weight.max="100000";weight.step=".1";weight.value=item.weight;weight.title="中奖权重";weight.setAttribute("aria-label",`第${index+1}格权重`);
+      const weight=document.createElement("input");weight.type="number";weight.inputMode="decimal";weight.min=".01";weight.max="100000";weight.step=".1";weight.value=item.weight;weight.title="中奖权重";weight.setAttribute("aria-label",`第${index+1}格权重`);
       weight.addEventListener("input",()=>{
         const value=Number(weight.value);
         if(Number.isFinite(value)&&value>0){entries[index].weight=Math.min(value,100000);drawWheel();updateProbabilityLabels();saveConfig();}
@@ -370,7 +410,7 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
       const small=document.createElement("small");small.textContent="中奖概率";
       const strong=document.createElement("strong");strong.textContent=(probs[index]*100).toFixed(probs[index]*100<1?2:1)+"%";
       prob.append(small,strong);
-      const del=document.createElement("button");del.className="delete-btn";del.type="button";del.textContent="×";del.title="删除此格";
+      const del=document.createElement("button");del.className="delete-btn";del.type="button";del.textContent="×";del.title="删除此格";del.setAttribute("aria-label",`删除第${index+1}格`);
       del.addEventListener("click",()=>{
         if(entries.length<=1){showToast("至少保留一个格子");return;}
         entries.splice(index,1);renderAll();saveConfig();
@@ -534,14 +574,15 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
     return delta;
   }
   canvas.addEventListener("pointerdown",event=>{
-    if(spinning)return;
+    if(spinning||activePointerId!==null||event.isPrimary===false||event.button!==0)return;
+    activePointerId=event.pointerId;
     dragging=true;dragMoved=false;dragVelocity=0;
     lastPointerAngle=pointerAngle(event);lastPointerTime=performance.now();
     dragStartX=event.clientX;dragStartY=event.clientY;
     try{canvas.setPointerCapture(event.pointerId);}catch(e){}
   });
   canvas.addEventListener("pointermove",event=>{
-    if(!dragging||spinning)return;
+    if(!dragging||spinning||event.pointerId!==activePointerId)return;
     const angle=pointerAngle(event),now=performance.now();
     const delta=normalizeDelta(angle-lastPointerAngle);
     const dt=Math.max(1,now-lastPointerTime);
@@ -550,16 +591,27 @@ header{display:flex;align-items:center;justify-content:space-between;gap:18px;ma
     if(Math.hypot(event.clientX-dragStartX,event.clientY-dragStartY)>6)dragMoved=true;
     lastPointerAngle=angle;lastPointerTime=now;drawWheel();
   });
-  function finishDrag(){
-    if(!dragging)return;
-    dragging=false;
+  function finishDrag(event){
+    if(!dragging||event.pointerId!==activePointerId)return;
+    dragging=false;activePointerId=null;
     if(dragMoved){
       const direction=dragVelocity<0?-1:1;
       startSpin({direction,boost:Math.abs(dragVelocity)});
     }
   }
   canvas.addEventListener("pointerup",finishDrag);
-  canvas.addEventListener("pointercancel",finishDrag);
+  function cancelDrag(event){
+    if(event.pointerId!==activePointerId)return;
+    dragging=false;dragMoved=false;dragVelocity=0;activePointerId=null;
+  }
+  canvas.addEventListener("pointercancel",cancelDrag);
+  canvas.addEventListener("lostpointercapture",cancelDrag);
+  $("editorToggle").addEventListener("click",()=>{
+    const open=$("editorToggle").getAttribute("aria-expanded")!=="true";
+    $("editorToggle").setAttribute("aria-expanded",String(open));
+    $("editorToggle").closest(".editor-panel").classList.toggle("is-open",open);
+    $("editorToggleHint").textContent=open?"收起设置 −":"展开设置 ＋";
+  });
   $("spinBtn").addEventListener("click",()=>startSpin({direction:1}));
   $("addBtn").addEventListener("click",()=>{
     if(entries.length>=MAX_ENTRIES){showToast(`最多支持 ${MAX_ENTRIES} 个格子`);return;}
